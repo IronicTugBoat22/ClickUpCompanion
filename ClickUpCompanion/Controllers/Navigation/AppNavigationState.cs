@@ -14,6 +14,9 @@ namespace ClickUpCompanion.Controllers.Navigation
         // Reference to the object the state is for (its context)
         public AppController Controller { get; set; }
 
+        // Reference to the previous state, for back navigation.
+        public AppNavigationState LastState { get; set; }
+
         // Other states (transition definitions).
         /// <summary>
         /// Transition function from the current state to the Home state.
@@ -24,5 +27,10 @@ namespace ClickUpCompanion.Controllers.Navigation
         /// Transition function from the current state to the Settings state.
         /// </summary>
         public abstract void GotoSettings();
+
+        /// <summary>
+        /// Transition function to return to the previous state.
+        /// </summary>
+        public abstract void GoBack();
     }
 }

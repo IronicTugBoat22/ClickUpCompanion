@@ -16,9 +16,15 @@ namespace ClickUpCompanion.EventArguments
         /// </summary>
         public PageTypes ToPage { get; private set; }
 
-        public NavigationRequestedEventArgs(PageTypes toPage)
+        /// <summary>
+        /// A flag indicating whether this navigation request is a back navigation request or not.
+        /// </summary>
+        public bool IsBackRequest { get; private set; }
+
+        public NavigationRequestedEventArgs(PageTypes toPage, bool isBackRequest)
         {
             this.ToPage = toPage;
+            this.IsBackRequest = isBackRequest;
         }
     }
 }

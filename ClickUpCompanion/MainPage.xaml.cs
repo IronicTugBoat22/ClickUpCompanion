@@ -41,10 +41,10 @@ namespace ClickUpCompanion
         /// Raised when the user indicated they want to navigate.
         /// </summary>
         public event NavigationRequestedHandler NavigationRequested;
-        private void RaiseNavigationRequested(PageTypes toPage)
+        private void RaiseNavigationRequested(PageTypes toPage, bool isBackRequest = false)
         {
             // Create the args and call the listening event handlers, if there are any.
-            NavigationRequestedEventArgs args = new NavigationRequestedEventArgs(toPage);
+            NavigationRequestedEventArgs args = new NavigationRequestedEventArgs(toPage, isBackRequest);
             this.NavigationRequested?.Invoke(this, args);
         }
         #endregion
@@ -104,7 +104,7 @@ namespace ClickUpCompanion
             // Default to the first menu item (home) when loaded.
             this.NavigationView.SelectedItem = NavigationView.MenuItems[0];
 
-            this.Navigate(PageTypes.Home, new Windows.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo());
+            //this.Navigate(PageTypes.Home, new Windows.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo());
 
             // Add keyboard accelerators for backwards navigation.
             var goBack = new KeyboardAccelerator { Key = Windows.System.VirtualKey.GoBack };
@@ -186,6 +186,14 @@ namespace ClickUpCompanion
             // Tell the content frame inside of the navigation view to navigate pages.
             this.ContentFrame.Navigate(item.Page, null, transitionInfo);
         }
+
+        /// <summary>
+        /// Navigates to the previous child page.
+        /// </summary>
+        public void NavigateBack()
+        {
+            this.ContentFrame.GoBack();
+        }
         #endregion
 
         #region Helper Methods
@@ -197,7 +205,7 @@ namespace ClickUpCompanion
 
         private bool On_BackRequested()
         {
-            if (!ContentFrame.CanGoBack)
+            if (!this.ContentFrame.CanGoBack)
                 return false;
 
             // Don't go back if the nav pane is overlayed.
@@ -206,7 +214,9 @@ namespace ClickUpCompanion
                  this.NavigationView.DisplayMode == NavigationViewDisplayMode.Minimal))
                 return false;
 
-            ContentFrame.GoBack();
+            string pageTypeString = this.ContentFrame.BackStack.First().SourcePageType.Name.ToString().Replace("Page", String.Empty);
+            PageTypes backToPage = Enum.Parse<PageTypes>(pageTypeString);
+            this.RaiseNavigationRequested(backToPage, true);
             return true;
         }
         #endregion

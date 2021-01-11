@@ -41,6 +41,13 @@ namespace ClickUpCompanion.Controllers
         #region Event Handlers
         private void OnNavigationRequested(object sender, NavigationRequestedEventArgs e)
         {
+            // If this is a back request, go back and exit this method.
+            if (e.IsBackRequest)
+            {
+                this.NavState.GoBack();
+                return;
+            }
+
             switch (e.ToPage)
             {
                 case PageTypes.Home:

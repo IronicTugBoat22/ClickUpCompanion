@@ -19,6 +19,7 @@ namespace ClickUpCompanion.Controllers.Navigation
         public HomeState(AppController controller)
         {
             this.Controller = controller;
+            this.LastState = null;
         }
 
         // Must define a constructor with the state passed in, in order to
@@ -28,6 +29,7 @@ namespace ClickUpCompanion.Controllers.Navigation
         public HomeState(AppNavigationState state)
         {
             this.Controller = state.Controller;
+            this.LastState = state;
         }
         #endregion
 
@@ -39,10 +41,20 @@ namespace ClickUpCompanion.Controllers.Navigation
 
         public override void GotoSettings()
         {
+            // Instruct the view to navigate.
             this.Controller.RootPage.Navigate(PageTypes.Settings);
 
             // Change the state to the Settings state.
             this.Controller.NavState = new SettingsState(this);
+        }
+
+        public override void GoBack()
+        {
+            // Instruct the view to navigate back.
+            this.Controller.RootPage.NavigateBack();
+
+            // Return to the previous state as the new current state.
+            this.Controller.NavState = this.LastState;
         }
         #endregion
     }
